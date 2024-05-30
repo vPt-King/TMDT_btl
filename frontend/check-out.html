@@ -60,22 +60,15 @@
               <span>0</span>
             </a>
           </div>
-          <div class="user-access" id="user-access">
-            <a href="./register.html">Register</a>
-            <a href="./login.html" class="in">Sign in</a>
-          </div>
+          
           <nav class="main-menu mobile-menu">
             <ul>
-              <li><a href="./index.html">Home</a></li>
-              <li>
-                <a href="#" id="shop-dropdown">Shop</a>
-                <ul class="sub-menu" id="shop-dropdown-menu">
-                  <li><a href="product-page.html">Product Page</a></li>
-                  <li><a href="shopping-cart.html">Shopping Cart</a></li>
-                  <li><a href="check-out.html">Check out</a></li>
-                </ul>
-              </li>
-              <li><a href="./contact.html">Contact</a></li>
+              <li><a href="./index.html">Trang chủ</a></li>
+              <li><a href="categories.html">Sản phẩm</a></li>
+              <li><a href="./contact.html">Liên hệ</a></li>
+              <li id="login"><a href="./login.html">Đăng nhập</a></li>
+              <li id="register"><a href="./register.html">Đăng kí</a></li>
+              <li id="sign_out" style="display: none;"><a href="./login.html">Đăng xuất</a></li>
             </ul>
           </nav>
         </div>
@@ -90,19 +83,17 @@
           <div class="row">
             <!-- Address -->
             <div class="col-lg-12">
-              <h3>Địa chỉ</h3>
+              <h3>Address</h3>
             </div>
             <div
               class="checkout-container col-lg-12"
-              style="margin-left: 15px; margin-bottom: 50px">
+              style="margin-left: 15px; margin-bottom: 50px"
+            >
               <div class="shipping-address row">
                 <div class="col-lg-10">
-                  <p><strong>Tên</strong> Vũ Phương Thanh</p>
+                  <p><strong>Tên</strong> 012354835</p>
                   <p>
-                    Phường Mộ Lao, Quận Hà Đông, Hà Nội
-                  </p>
-                  <p>
-                    0859490556
+                    Phường Mộ Lao, Quận Hà Đông, Hà Nộiádawdasdaw ădawdsa ư dă
                   </p>
                 </div>
                 <div class="col-lg-2">
@@ -111,12 +102,11 @@
                   </button>
                 </div>
               </div>
-             
             </div>
 
             <!-- Product -->
             <div class="col-lg-12">
-              <h3>Sản phẩm</h3>
+              <h3>Product</h3>
             </div>
             <div class="container" style="margin-bottom: 50px">
               <div class="cart-table">
@@ -140,22 +130,22 @@
               <h3>Shipping</h3>
             </div>
             <div class="shipping-info">
-              <h5>Chọn phương thức vận chuyển</h5>
+              <h5>Choose a shipping</h5>
               <div class="chose-shipping">
                 <div class="cs-item">
                   <input type="radio" name="cs" id="one" />
                   <label for="one" class="active">
-                    Free Ship
-                   
+                    Free Standard shhipping
+                    <span>Estimate for New York</span>
                   </label>
                 </div>
                 <div class="cs-item">
                   <input type="radio" name="cs" id="two" />
-                  <label for="two"> Vận chuyển thường </label>
+                  <label for="two"> Next Day delievery $10 </label>
                 </div>
                 <div class="cs-item last">
                   <input type="radio" name="cs" id="three" />
-                  <label for="three"> Chuyển phát nhanh </label>
+                  <label for="three"> In Store Pickup - Free </label>
                 </div>
               </div>
             </div>
@@ -212,7 +202,7 @@
           <div class="row">
             <div class="col-lg-12">
               <div class="payment-method">
-                <h3>Thanh toán</h3>
+                <h3>Payment</h3>
                 <ul>
                   <li>Paypal <img src="img/paypal.jpg" alt="" /></li>
                   <li>
@@ -223,7 +213,7 @@
                     <input type="radio" id="two" />
                   </li>
                 </ul>
-                <button onclick="handleCheckOut(event)">Đặt hàng</button>
+                <button type="submit">Place your order</button>
               </div>
             </div>
           </div>
@@ -357,13 +347,21 @@
     <script src="js/main.js"></script>
     <script src="js/checkout.js"></script>
     <script>
-      function handleCheckOut(event)
+       function checkLogin(){
+      let user = JSON.parse(localStorage.getItem("user"));
+      if(!user)
       {
-        const user = JSON.parse(localStorage.getItem("user"))
-        const products = JSON.parse(localStorage.getItem("cart_products"))
-        alert("đặt hàng thành công")
-        window.location.href = "./index.html"
+        document.getElementById("register").style.display="inline-block"
+        document.getElementById("login").style.display="inline-block"
+        document.getElementById("sign_out").style.display="none"
       }
+      else{
+        document.getElementById("sign_out").style.display="inline-block"
+        document.getElementById("register").style.display="none"
+        document.getElementById("login").style.display="none"
+      }
+    }
+    checkLogin()
     </script>
   </body>
 </html>

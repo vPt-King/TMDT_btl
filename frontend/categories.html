@@ -57,25 +57,18 @@
             <img src="img/icons/man.png" alt="" />
             <a href="./shopping-cart.html">
               <img src="img/icons/bag.png" alt="" />
-              <span>2</span>
+              <span>0</span>
             </a>
           </div>
-          <div class="user-access" id="user-access">
-            <a href="./register.html">Register</a>
-            <a href="./login.html" class="in">Sign in</a>
-          </div>
+          
           <nav class="main-menu mobile-menu">
             <ul>
-              <li><a class="active" href="./index.html">Home</a></li>
-              <li>
-                <a href="#" id="shop-dropdown">Shop</a>
-                <ul class="sub-menu" id="shop-dropdown-menu">
-                  <li><a href="product-page.html">Product Page</a></li>
-                  <li><a href="shopping-cart.html">Shopping Cart</a></li>
-                  <li><a href="check-out.html">Check out</a></li>
-                </ul>
-              </li>
-              <li><a href="./contact.html">Contact</a></li>
+              <li><a href="./index.html">Trang chủ</a></li>
+              <li><a href="categories.html">Sản phẩm</a></li>
+              <li><a href="./contact.html">Liên hệ</a></li>
+              <li id="login"><a href="./login.html">Đăng nhập</a></li>
+              <li id="register"><a href="./register.html">Đăng kí</a></li>
+              <li id="sign_out" style="display: none;"><a href="./login.html">Đăng xuất</a></li>
             </ul>
           </nav>
         </div>
@@ -117,45 +110,14 @@
             <div class="sidebar">
               <div class="sidebar-header">Price</div>
               <div class="price-range">
-                <input type="text" value="30.000 đ - 8.150.000 đ" readonly />
+                <input type="text" placeholder="Nhập giá" id="filter_price"/>
               </div>
               <div class="filter-button">
-                <button>Lọc</button>
+                <button id="button_filter_price" onclick="handleClickFilter(event)">Lọc</button>
               </div>
             </div>
 
-            <!-- <div class="sidebar">
-              <aside class="shop-sidebar">
-                <span class="widget-title shop-sidebar">Thương hiệu</span>
-                <div class="is-divider small"></div>
-                <ul class="woocommerce-widget-layered-nav-list">
-                  <li>
-                    <a
-                      href="#"
-                      class="woocommerce-widget-layered-nav-list__item wc-layered-nav-term"
-                      data-filter="*"
-                      >All</a
-                    >
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      class="woocommerce-widget-layered-nav-list__item wc-layered-nav-term"
-                      data-filter="category1"
-                      >Category 1</a
-                    >
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      class="woocommerce-widget-layered-nav-list__item wc-layered-nav-term"
-                      data-filter="category2"
-                      >Category 2</a
-                    >
-                  </li>
-                </ul>
-              </aside>
-            </div> -->
+            
           </div>
           <div class="col-lg-9">
             <div class="row">
@@ -163,16 +125,7 @@
                 <div class="row">
                   <div class="col-lg-12">
                     <div class="categories-filter">
-                      <div class="cf-left">
-                        <form action="#">
-                          <select class="sort">
-                            <option value="">Sort by</option>
-                            <option value="">Orders</option>
-                            <option value="">Newest</option>
-                            <option value="">Price</option>
-                          </select>
-                        </form>
-                      </div>
+                      
                     </div>
                   </div>
                 </div>
@@ -296,8 +249,65 @@
     <script src="js/jquery.nice-select.min.js"></script>
     <script src="js/mixitup.min.js"></script>
     <script src="js/main.js"></script>
-    <script src="js/catagories.js"></script>
+    <!-- <script src="js/catagories.js"></script> -->
     <script>
+      function handleSort(event)
+      {
+        alert(event.target)
+      }
+      function checkLogin(){
+      let user = JSON.parse(localStorage.getItem("user"));
+      if(!user)
+      {
+        document.getElementById("register").style.display="inline-block"
+        document.getElementById("login").style.display="inline-block"
+        document.getElementById("sign_out").style.display="none"
+      }
+      else{
+        document.getElementById("sign_out").style.display="inline-block"
+        document.getElementById("register").style.display="none"
+        document.getElementById("login").style.display="none"
+      }
+    }
+    checkLogin()
+    function handleClickFilter(event)
+    {
+      
+      const price = parseInt(document.getElementById("filter_price").value);
+      if(!price)
+      {
+        alert("Bạn không được để trống giá tiền")
+      }
+      else{
+        res = []
+        products.forEach(product => {
+
+          if(price - 100000 <= product.price && product.price <= price + 100000 )
+          {
+            res.push(product)
+          }
+        })
+        const products_show = document.getElementById("product-list")
+        products_show.innerHTML = ""
+        for(let i = 0; i < res.length; i++)
+        {
+          products_show.innerHTML += `
+          <div class="col-lg-3 col-sm-6 mix all dresses bags">
+                      <div class="single-product-item">
+                          <figure>
+                              <a href="./product-page.html?id=${res[i].id}"><img src="${res[i].img_1}" alt=""></a>
+                          
+                          </figure>
+                          <div class="product-text">
+                              <h6>${res[i].name}</h6>
+                              <p>${res[i].price}</p>
+                          </div>
+                      </div>
+                  </div>
+          `
+        }
+      }
+    }
       fetch("http://localhost:3000/api/category")
       .then(res=>res.json())
       .then(categories=>{
@@ -330,10 +340,7 @@
                 </div>
         `
       }
-      function handleClickProduct(event)
-      {
-        console.log(event.target)
-      }
+    
       function handleClick(event)
       {
         const id = parseInt(event.target.id)

@@ -58,25 +58,18 @@
             <img src="img/icons/man.png" alt="" />
             <a href="./shopping-cart.html">
               <img src="img/icons/bag.png" alt="" />
-              <span>2</span>
+              <span>0</span>
             </a>
           </div>
-          <div class="user-access" id="user-access">
-            <a href="./register.html">Register</a>
-            <a href="./login.html" class="in">Sign in</a>
-          </div>
+          
           <nav class="main-menu mobile-menu">
             <ul>
-              <li><a class="active" href="./index.html">Home</a></li>
-              <li>
-                <a href="#" id="shop-dropdown">Shop</a>
-                <ul class="sub-menu" id="shop-dropdown-menu">
-                  <li><a href="product-page.html">Product Page</a></li>
-                  <li><a href="shopping-cart.html">Shopping Cart</a></li>
-                  <li><a href="check-out.html">Check out</a></li>
-                </ul>
-              </li>
-              <li><a href="./contact.html">Contact</a></li>
+              <li><a href="./index.html">Trang chủ</a></li>
+              <li><a href="categories.html">Sản phẩm</a></li>
+              <li><a href="./contact.html">Liên hệ</a></li>
+              <li id="login"><a href="./login.html">Đăng nhập</a></li>
+              <li id="register"><a href="./register.html">Đăng kí</a></li>
+              <li id="sign_out" style="display: none;"><a href="./login.html">Đăng xuất</a></li>
             </ul>
           </nav>
         </div>
@@ -118,6 +111,7 @@
                 </div>
               </div>
               <ul class="tags" style="margin-top:5px;">
+                <li id="product_quantity"><span>Số lượng: </span></li>
                 <li id="category_show"><span>Category :</span></li>
               </ul>
               <div class="product-quantity">
@@ -126,7 +120,7 @@
                 </div>
               </div>
               <a onclick="handleCart(event)" class="primary-btn pc-btn" id="add-to-cart" style="cursor: pointer;"
-                >Add to cart</a
+                >Thêm vào giỏ hàng</a
               >
             </div>
           </div>
@@ -160,6 +154,27 @@
                 Thứ 7: 10am - 4pm (Đóng cửa vào chủ nhật)
               </li>
             </ul>
+          </div>
+          <div class="col-lg-12">
+            <div class="title" style="margin-top:20px ;"><h2>Nhận xét</h2></div>
+            <div class="write_comment">
+              <div class="show_form">
+                <div><input type="text" style="width: 100%;" id="comment"></div>
+                <div style="display: flex; justify-content: end; margin-top: 5px;"><button style="border-radius: 5px;" onclick="handleMoreComment(event)">Thêm bình luận</button></div>
+              </div>
+            </div>
+            <div class="read_comment">
+              <ul id="show_comment">
+                <!-- <li>
+                  <div class="name"><strong>Nguyễn Văn Thắng</strong></div>
+                  <div class="comment">Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque, molestiae porro sit amet odio asperiores quidem quos vel dignissimos labore, provident, nostrum debitis necessitatibus quae eveniet sed enim sapiente adipisci fugiat! Asperiores facilis, possimus dolorum aut esse nulla nemo. Alias, quidem provident quisquam ipsam quos cum nihil voluptas id dignissimos.</div>
+                </li>
+                <li>
+                  <div class="name"><strong>Trương Văn Tuấn</strong></div>
+                  <div class="comment">Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque, molestiae porro sit amet odio asperiores quidem quos vel dignissimos labore, provident, nostrum debitis necessitatibus quae eveniet sed enim sapiente adipisci fugiat! Asperiores facilis, possimus dolorum aut esse nulla nemo. Alias, quidem provident quisquam ipsam quos cum nihil voluptas id dignissimos.</div>
+                </li> -->
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -288,6 +303,58 @@
     <script src="js/main.js"></script>
     <!-- <script src="js/productPage.js"></script> -->
     <script>
+      function handleMoreComment(event)
+      {
+        const user = JSON.parse(localStorage.getItem("user"))
+        if(user)
+        {
+          const comment = document.getElementById("comment").value;
+          if(comment == "")
+          {
+            alert("Bạn phải nhập nội dung bình luận")
+          }
+          else{
+            let url = window.location.href.toString()
+            let product_id = parseInt(url.split("?id=")[1])
+            const data = {
+              comment,
+              id_user: user.id,
+              id_product: product_id
+            }
+            fetch("http://localhost:3000/api/write_comment", {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'application/json' }
+                })
+                .then((res) => {
+                    return res.json()
+                })
+                .then((res) => {
+                    alert("Thêm bình luận thành công");
+                    window.location.reload()
+                })
+          }
+        }
+        else{
+          alert("Bạn phải đăng nhập để bình luận")
+        }
+        
+      }
+      function checkLogin(){
+      let user = JSON.parse(localStorage.getItem("user"));
+      if(!user)
+      {
+        document.getElementById("register").style.display="inline-block"
+        document.getElementById("login").style.display="inline-block"
+        document.getElementById("sign_out").style.display="none"
+      }
+      else{
+        document.getElementById("sign_out").style.display="inline-block"
+        document.getElementById("register").style.display="none"
+        document.getElementById("login").style.display="none"
+      }
+    }
+    checkLogin()
       const products = JSON.parse(localStorage.getItem("products"))
       const show_products = document.getElementById("show_products")
       show_products.innerHTML = ""
@@ -315,6 +382,7 @@
       .then(res=>res.json())
         
       .then(data => {
+        console.log(data)
         img = data[0].img_2
         price = parseInt(data[0].price)
         quantity = parseInt(data[0].quantity)
@@ -323,6 +391,7 @@
         document.getElementById("product-price").innerHTML = data[0].price;
         document.getElementById("short_text").innerHTML = data[0].short_text;
         document.getElementById("long_text").innerHTML = data[0].long_text;
+        document.getElementById("product_quantity").innerHTML += data[0].quantity;
       })
 
       fetch(`http://localhost:3000/api/category_of_product?id=${id}`)
@@ -335,37 +404,72 @@
         }
         
       })
+
+      fetch(`http://localhost:3000/api/comment_of_product?id=${id}`)
+      .then(res=>res.json())
+      .then(comments=> {
+        const show_comment = document.getElementById("show_comment")
+        show_comment.innerHTML = "";
+        comments.forEach(comment => {
+          show_comment.innerHTML += `
+          <li>
+                  <div class="name"><strong>${comment.name}</strong></div>
+                  <div class="comment">${comment.content}</div>
+          </li>
+          `
+        })
+    
+        
+      })
+
+
+
       function handleCart(event)
       {
-        const url = window.location.href.toString()
+        const user = JSON.parse(localStorage.getItem("user"))
+        if(user)
+        {
+          const url = window.location.href.toString()
         const id = parseInt(url.split("?id=")[1])
         var quantityInp = parseInt(document.getElementById("quantity").value)
-        if(quantity <= 0 || quantityInp > quantity || !quantityInp)
+        if(quantityInp <= 0 || !quantityInp)
         {
           alert("Số lượng không hợp lệ")
+        }
+        else if(quantityInp > quantity){
+          alert("Số lượng hàng không đủ")
         }
         else
         {
           const pro = {
-          quantity: parseInt(document.getElementById("quantity").value),
-          name:document.getElementById("product-name").innerHTML,
-          img,
-          id,
-          price
-        };
+            quantity: parseInt(document.getElementById("quantity").value),
+            name:document.getElementById("product-name").innerHTML,
+            img,
+            id,
+            price,
+            product_quantity: quantity
+          };
         const cart_products = JSON.parse(localStorage.getItem("cart_products"));
-        console.log(cart_products)
+        console.log("cart: ",cart_products)
+        canPush = true
         if(cart_products)
         {
           isExist = false
           cart_products.forEach(prod => {
             if(prod.id == pro.id)
             {
-              isExist = true
-              prod.quantity += pro.quantity
+              if(prod.quantity + pro.quantity > quantity)
+              {
+                canPush = false
+                alert("Sản phẩm không đủ số lượng");
+              }
+              else{
+                isExist = true
+                prod.quantity += pro.quantity
+              }
             }
           })
-          if(!isExist){
+          if(!isExist && canPush == true){
             cart_products.push(pro)
           }
           localStorage.setItem("cart_products", JSON.stringify(cart_products))
@@ -375,10 +479,24 @@
           cart.push(pro)
           localStorage.setItem("cart_products", JSON.stringify(cart))
         }
-        alert("Thêm sản phẩm thành công")
+        if(canPush)alert("Thêm sản phẩm thành công")
+        }
+        }
+        else{
+          alert("Bạn cần đăng nhập để thêm vào giỏ hàng")
         }
         
       }
     </script>
+    <style>
+      .read_comment ul{
+        list-style: none;
+      }
+      .read_comment ul li{
+        margin-top: 13px;
+        padding-bottom: 5px;
+        border-bottom: 2px solid #d9dddc;
+      }
+    </style>
   </body>
 </html>

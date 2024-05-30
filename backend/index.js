@@ -175,6 +175,19 @@ app.get("/api/category_of_product", (req,res)=>{
   })
 })
 
+app.get("/api/comment_of_product", (req,res)=>{
+  const id = parseInt(req.query.id);
+  const query = `select user.name as name, comment.content as content from user, comment where comment.id_product=${id} and user.id=comment.id_user`
+  connection.query(query, (err, result)=> {
+    if (err) {
+      console.error('Error querying database:', err);
+      return;
+    }
+    return res.send(JSON.stringify(result))
+  })
+})
+
+
 app.post("/api/add_product", (req,res)=>{
   const {name,quantity,short_text,long_text,price,status,img_1,img_2} = req.body;
   const query = "INSERT INTO `tmdt`.`product` (`name`, `quantity`, `short_text`,`long_text`, `img_1`,`img_2`,`price`,`status`) VALUES (" + `'${name}', ${quantity}, '${short_text}','${long_text}','${img_1}','${img_2}', ${price}, '${status}');`;
@@ -275,6 +288,19 @@ app.post("/api/add_status_order", (req,res)=>{
     return res.send(JSON.stringify("ok"))
   })
 })
+app.post("/api/write_comment", (req,res)=>{
+  const {comment, id_user, id_product} = req.body;
+  console.log(comment, id_user, id_product)
+  const query = "INSERT INTO `tmdt`.`comment` (`content`, `id_user`, `id_product`) VALUES (" + `'${comment}', ${id_user}, ${id_product});`
+  connection.query(query, (err,results)=>{
+    if (err) {
+      console.error('Error querying database:', err);
+      return;
+    }
+    return res.send(JSON.stringify("Thêm bình luận thành công"))
+  })
+})
+
 
 
 
